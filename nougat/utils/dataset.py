@@ -204,7 +204,33 @@ class SciPDFDataset(Dataset):
         for i in range(self.dataset_length):
             yield self[i]
 
+# custom dataset for this research
+class CustomDataset(Dataset):
+    """
+    Args:
+        train_path: the path to the train dataset
+        valid_path: the path to the validation dataset
+        test_path: the path tot the test dataset
+    """
 
+    def __init__(
+        self,
+        train_path: str,
+        valid_path: str,
+        test_path: str
+    ):
+        super.__init__()
+        self.train_path = train_path
+        self.valid_path = valid_path
+        self.test_path = test_path
+        #.....
+    
+    def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor]:
+        pass
+    
+    def __len__(self) -> int:
+        pass
+    
 class NougatDataset(Dataset):
     """
     Args:
