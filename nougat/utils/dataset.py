@@ -220,7 +220,7 @@ class CustomDataset(Dataset):
         image_path: str,
         split: str = "train"
     ):
-        super.__init__()
+        super().__init__()
         self.train_jsonl_path: str = train_jsonl_path
         self.valid_jsonl_path: str = valid_jsonl_path
         self.image_path: str = image_path
