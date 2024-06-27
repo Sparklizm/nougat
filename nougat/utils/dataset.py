@@ -246,10 +246,31 @@ class CustomDataset(Dataset):
         inside NougatDataset the program expects that calling self.dataset[idx] returns a dict that contains
         key "image", key "ground_truth" and "meta"
         """
-        pass
-    
+        # load the line out as dict according to the split
+        meta_list: List[str] = self.train_meta if self.split == "train" else self.valid_meta
+        metadata: Dict = orjson.loads(meta_list[idx])
+        # prepare the picture first
+        pic_path: str = metadata["image_url"]
+        img: Image.Image = None
+        # left case
+        if pic_path.endswith(".left.png"):
+            img = Image.open(os.path.join(self.image_path, pic_path.replace(".left.png", ".tif")))
+            img = img.crop((0, 0, img.width//2, img.height)) # left crop
+        # right case
+        elif pic_path.endswith(".right.png"):
+            img = Image.open(os.path.join(self.image_path, pic_path.replace(".right.png", ".tif")))
+            img = img.crop((img.width//2, 0, img.width, img.height)) # right crop
+        # other case (should not happen but just in case)
+        else:
+            try:
+                img = Image.open(os.path.join(self.image_path, pic_path.replace(".png", ".tif")))
+            except:
+                raise Exception("No such image exist.")
+
+        return {"image": img, "ground_truth": metadata["sentence"], "meta": metadata}
+
     def __len__(self) -> int:
-        pass
+        return len(self.train_meta) if self.split == "train" else len(self.valid_meta)
     
 class NougatDataset(Dataset):
     """
