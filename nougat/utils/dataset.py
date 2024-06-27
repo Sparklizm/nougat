@@ -215,20 +215,34 @@ class CustomDataset(Dataset):
 
     def __init__(
         self,
-        train_path: str,
-        valid_path: str,
-        test_path: str
+        train_jsonl_path: str,
+        valid_jsonl_path: str,
+        image_path: str
     ):
         super.__init__()
-        self.train_path = train_path
-        self.valid_path = valid_path
-        self.test_path = test_path
-        #.....
+        self.train_jsonl_path: str = train_jsonl_path
+        self.valid_jsonl_path: str = valid_jsonl_path
+        self.image_path: str = image_path
+        self.train_meta: List[str] = None
+        self.valid_meta: List[str] = None
+
+        try:
+            with open(train_jsonl_path) as w:
+                self.train_meta = w.readlines()
+        except Exception:
+            raise Exception("load train_jsonl failed.")
+        
+        try:
+            with open(valid_jsonl_path) as w:
+                self.valid_meta = w.readlines()
+        except Exception:
+            raise Exception("load valid_jsonl failed.")
+
     
     def __getitem__(self, idx: int) -> Dict:
         """
         inside NougatDataset the program expects that calling self.dataset[idx] returns a dict that contains
-        key "image" and key ground_truth
+        key "image", key "ground_truth" and "meta"
         """
         pass
     
