@@ -280,7 +280,9 @@ class NougatDataset(Dataset):
 
     def __init__(
         self,
-        dataset_path: str,
+        train_jsonl_path,
+        valid_jsonl_path,
+        image_path,
         nougat_model: PreTrainedModel,
         max_length: int,
         split: str = "train",
@@ -293,8 +295,8 @@ class NougatDataset(Dataset):
         self.perturb = "NOUGAT_PERTURB" in os.environ and os.environ["NOUGAT_PERTURB"]
         # TODO improve naming conventions
         template = "%s"
-        self.dataset = SciPDFDataset(
-            dataset_path, split=self.split, template=template, root_name=root_name
+        self.dataset = CustomDataset(
+            train_jsonl_path, valid_jsonl_path, image_path, self.split
         )
         self.dataset_length = len(self.dataset)
 
