@@ -210,14 +210,15 @@ class CustomDataset(Dataset):
     Args:
         train_path: the path to the train dataset
         valid_path: the path to the validation dataset
-        test_path: the path tot the test dataset
+        test_path: the path to the test dataset
     """
 
     def __init__(
         self,
         train_jsonl_path: str,
         valid_jsonl_path: str,
-        image_path: str
+        image_path: str,
+        split: str = "train"
     ):
         super.__init__()
         self.train_jsonl_path: str = train_jsonl_path
@@ -225,6 +226,7 @@ class CustomDataset(Dataset):
         self.image_path: str = image_path
         self.train_meta: List[str] = None
         self.valid_meta: List[str] = None
+        self.split: str = split
 
         try:
             with open(train_jsonl_path) as w:
