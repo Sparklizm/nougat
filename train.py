@@ -146,6 +146,7 @@ def train(config):
 
     # add datasets to data_module
     datasets = {"train": [], "validation": []}
+    """
     for i, dataset_path in enumerate(config.dataset_paths):
         for split in ["train", "validation"]:
             datasets[split].append(
@@ -156,6 +157,23 @@ def train(config):
                     split=split,
                 )
             )
+            """
+    datasets["train"] = NougatDataset(
+        train_jsonl_path = config.dataset_paths[0],
+        valid_jsonl_path = config.dataset_paths[1],
+        image_path = config.dataset_paths[2],
+        nougat_model = model_module.model,
+        max_length = config.max_length,
+        split = "train"
+    )
+    datasets["validation"] = NougatDataset(
+        train_jsonl_path = config.dataset_paths[0],
+        valid_jsonl_path = config.dataset_paths[1],
+        image_path = config.dataset_paths[2],
+        nougat_model = model_module.model,
+        max_length = config.max_length,
+        split = "validation"
+    )
     data_module.train_datasets = datasets["train"]
     data_module.val_datasets = datasets["validation"]
 
