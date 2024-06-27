@@ -230,7 +230,6 @@ class CustomDataset(Dataset):
         inside NougatDataset the program expects that calling self.dataset[idx] returns a dict that contains
         key "image" and key ground_truth
         """
-        
         pass
     
     def __len__(self) -> int:
