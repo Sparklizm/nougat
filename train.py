@@ -35,6 +35,7 @@ except ModuleNotFoundError:
 
 import logging
 
+
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
@@ -165,6 +166,7 @@ def train(config):
         max_length = config.max_length,
         split = "train"
     )]
+
     datasets["validation"] = [NougatDataset(
         train_jsonl_path = config.dataset_paths[0],
         valid_jsonl_path = config.dataset_paths[1],
@@ -184,7 +186,8 @@ def train(config):
     )
     grad_norm_callback = GradNormCallback()
     custom_ckpt = CustomCheckpointIO()
-    if not config.debug:
+
+    if True: #not config.debug:
         logger = Logger(config.exp_name, project="Nougat", config=dict(config))
     else:
         logger = TensorBoardLogger(
@@ -197,7 +200,7 @@ def train(config):
     trainer = pl.Trainer(
         num_nodes=config.get("num_nodes", 1),
         devices="auto",
-        strategy="ddp_find_unused_parameters_true",
+        strategy="ddp_find_unused_parameters_true", #"deepspeed_stage_3",
         accelerator="auto",
         # plugins=[SLURMEnvironment(auto_requeue=False)],
         max_epochs=config.max_epochs,
@@ -208,13 +211,15 @@ def train(config):
         gradient_clip_val=config.gradient_clip_val,
         log_every_n_steps=15,
         precision="bf16-mixed",
+        accumulate_grad_batches=config.accumulate_grad_batches,
         num_sanity_val_steps=0,
-        logger=logger,
+        logger=None,#logger,
         callbacks=[
             lr_callback,
             grad_norm_callback,
             checkpoint_callback,
-            GradientAccumulationScheduler({0: config.accumulate_grad_batches}),
+            #accumulate_grad_batches=config.accumulate_grad_batches,
+            #GradientAccumulationScheduler({0: config.accumulate_grad_batches}),
         ],
     )
 
