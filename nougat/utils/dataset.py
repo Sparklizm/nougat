@@ -224,8 +224,8 @@ class CustomDataset(Dataset):
         self.train_jsonl_path: str = train_jsonl_path
         self.valid_jsonl_path: str = valid_jsonl_path
         self.image_path: str = image_path
-        self.train_meta: List[str] = None
-        self.valid_meta: List[str] = None
+        self.train_meta: List[str] = orjson.loads(train_jsonl_path.open().read())
+        self.valid_meta: List[str] = orjson.loads(valid_jsonl_path.open().read())
         self.split: str = split
 
         try:
@@ -271,6 +271,10 @@ class CustomDataset(Dataset):
 
     def __len__(self) -> int:
         return len(self.train_meta) if self.split == "train" else len(self.valid_meta)
+
+    def __iter__(self):
+        for i in range(len(self)):
+            yield self[i]
     
 class NougatDataset(Dataset):
     """

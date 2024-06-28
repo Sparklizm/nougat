@@ -140,7 +140,6 @@ def train(config):
         `config` (dict): A dictionary containing configuration settings for training.
     """
     pl.seed_everything(config.get("seed", 42), workers=True)
-
     model_module = NougatModelPLModule(config)
     data_module = NougatDataPLModule(config)
 
@@ -158,25 +157,25 @@ def train(config):
                 )
             )
             """
-    datasets["train"] = NougatDataset(
+    datasets["train"] = [NougatDataset(
         train_jsonl_path = config.dataset_paths[0],
         valid_jsonl_path = config.dataset_paths[1],
         image_path = config.dataset_paths[2],
         nougat_model = model_module.model,
         max_length = config.max_length,
         split = "train"
-    )
-    datasets["validation"] = NougatDataset(
+    )]
+    datasets["validation"] = [NougatDataset(
         train_jsonl_path = config.dataset_paths[0],
         valid_jsonl_path = config.dataset_paths[1],
         image_path = config.dataset_paths[2],
         nougat_model = model_module.model,
         max_length = config.max_length,
         split = "validation"
-    )
+    )]
     data_module.train_datasets = datasets["train"]
     data_module.val_datasets = datasets["validation"]
-
+    print("dataset loaded")
     lr_callback = LearningRateMonitor(logging_interval="step")
 
     checkpoint_callback = ModelCheckpoint(
@@ -185,7 +184,6 @@ def train(config):
     )
     grad_norm_callback = GradNormCallback()
     custom_ckpt = CustomCheckpointIO()
-
     if not config.debug:
         logger = Logger(config.exp_name, project="Nougat", config=dict(config))
     else:
@@ -195,6 +193,7 @@ def train(config):
             version=config.exp_version,
             default_hp_metric=False,
         )
+ 
     trainer = pl.Trainer(
         num_nodes=config.get("num_nodes", 1),
         devices="auto",
