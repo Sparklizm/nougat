@@ -224,8 +224,8 @@ class CustomDataset(Dataset):
         self.train_jsonl_path: str = train_jsonl_path
         self.valid_jsonl_path: str = valid_jsonl_path
         self.image_path: str = image_path
-        self.train_meta: List[str] = orjson.loads(train_jsonl_path.open().read())
-        self.valid_meta: List[str] = orjson.loads(valid_jsonl_path.open().read())
+        self.train_meta: List[str] = None
+        self.valid_meta: List[str] = None
         self.split: str = split
 
         try:
