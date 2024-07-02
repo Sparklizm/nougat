@@ -213,7 +213,7 @@ def train(config):
         precision="bf16-mixed",
         accumulate_grad_batches=config.accumulate_grad_batches,
         num_sanity_val_steps=0,
-        logger=None,#logger,
+        logger=logger,#logger,
         callbacks=[
             lr_callback,
             grad_norm_callback,

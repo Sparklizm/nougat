@@ -88,6 +88,7 @@ class NougatModelPLModule(pl.LightningModule):
         preds = self.model.inference(
             image_tensors=image_tensors,
             return_attentions=False,
+            early_stopping=False,
         )["predictions"]
         gts = self.model.decoder.tokenizer.batch_decode(
             markdown, skip_special_tokens=True
