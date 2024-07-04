@@ -213,53 +213,66 @@ class CustomDataset(Dataset):
         test_path: the path to the test dataset
     """
 
-    train_meta: List[str] = None
-    valid_meta: List[str] = None
+    
 
     def __init__(
         self,
-        train_jsonl_path: str,
-        valid_jsonl_path: str,
+        image_list_path: str,
+        sentences_path: str,
+        #valid_jsonl_path: str,
         image_path: str,
         split: str = "train"
     ):
         super().__init__()
-        self.train_jsonl_path: str = train_jsonl_path
-        self.valid_jsonl_path: str = valid_jsonl_path
+        #self.train_jsonl_path: str = train_jsonl_path
+        #self.valid_jsonl_path: str = valid_jsonl_path
+        self.image_list_path: str = image_list_path
+        self.sentences_path: str = sentences_path
         self.image_path: str = image_path
         self.split: str = split
+        self.img_list: List[str] = None
 
         try:
-            with open(train_jsonl_path) as w:
-                if self.train_meta == None:
-                    self.train_meta = w.readlines()
+            with open(image_list_path) as w:
+                self.img_list = w.readlines()
         except Exception:
             raise Exception("load train_jsonl failed.")
-        
+        """
         try:
             with open(valid_jsonl_path) as w:
                 if self.valid_meta == None:
                     self.valid_meta = w.readlines()
         except Exception:
             raise Exception("load valid_jsonl failed.")
-
+        """
     
     def __getitem__(self, idx: int) -> Dict:
         """
         inside NougatDataset the program expects that calling self.dataset[idx] returns a dict that contains
         key "image", key "ground_truth" and "meta"
         """
-        # load the line out as dict according to the split
-        meta_list: List[str] = self.train_meta if self.split == "train" else self.valid_meta
-        metadata: Dict = orjson.loads(meta_list[idx])
-        # prepare the picture first
-        pic_path: str = metadata["image_url"]
-        #img: Image.Image = None
+        # load array of images
+        meta_list: List[str] = self.img_list if self.split == "train" else [""]
+        pic_path_short: str = meta_list[idx].replace("\n", "")
+        pic_path: str = os.path.join(self.image_path, pic_path_short)
+
         try:
-            img: Image.Image = Image.open(os.path.join(self.image_path, pic_path))
+            img: Image.Image = Image.open(pic_path)
         except:
-            print(f"cannot load for {os.path.join(self.image_path, pic_path)}")
+            print(f"cannot load for {pic_path}")
             return None
+        txt_path_short: str = pic_path_short.replace("/","_")+".txt"
+        txt_path = os.path.join(self.sentences_path, txt_path_short)
+
+        try:
+            with open(txt_path, 'r') as w:
+                sentence = w.read()
+        except:
+            print(f"cannot reteieve sentence in {txt_path}")
+            return None
+
+        return {"image": img, "ground_truth": sentence, "meta": {"img_path": pic_path}}
+    
         """
         # left case
         if pic_path.endswith(".left.png"):
@@ -277,10 +290,10 @@ class CustomDataset(Dataset):
                 raise Exception("No such image exist.")
         """
 
-        return {"image": img, "ground_truth": metadata["sentence"], "meta": metadata}
+        #return {"image": img, "ground_truth": metadata["sentence"], "meta": metadata}
 
     def __len__(self) -> int:
-        return len(self.train_meta) if self.split == "train" else len(self.valid_meta)
+        return len(self.img_list) if self.split == "train" else 0 #len(self.valid_meta)
 
     def __iter__(self):
         for i in range(len(self)):
@@ -294,8 +307,8 @@ class NougatDataset(Dataset):
 
     def __init__(
         self,
-        train_jsonl_path,
-        valid_jsonl_path,
+        image_list_path,
+        sentences_path,
         image_path,
         nougat_model: PreTrainedModel,
         max_length: int,
@@ -310,7 +323,7 @@ class NougatDataset(Dataset):
         # TODO improve naming conventions
         template = "%s"
         self.dataset = CustomDataset(
-            train_jsonl_path, valid_jsonl_path, image_path, self.split
+            image_list_path, sentences_path, image_path, self.split
         )
         self.dataset_length = len(self.dataset)
 

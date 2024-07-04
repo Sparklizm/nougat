@@ -1,7 +1,7 @@
 resume_from_checkpoint_path: null
 result_path: "/graft3/checkpoints/jiaxing"
 model_path: null
-dataset_paths: ["/graft2/datasets/danlu/eebo/eebo_data_train.jsonl", "/graft2/datasets/danlu/eebo/eebo_data_val.jsonl", "/graft2/datasets/danlu/eebo/eebo_data"]
+dataset_paths: ["/graft2/datasets/danlu/eebo/labels/image_list.txt", "/graft2/datasets/danlu/eebo/labels/sentences", "/graft2/datasets/danlu/eebo/eebo_data"]
 tokenizer: "dataset/tokenizer.json"
 exp_name: "nougat"
 train_batch_sizes: [1]
