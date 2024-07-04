@@ -1,17 +1,17 @@
 resume_from_checkpoint_path: null
-result_path: "result"
+result_path: "/graft3/checkpoints/jiaxing"
 model_path: null
-dataset_paths: ["/home/jiaxing/dataset/test.jsonl", "/home/jiaxing/dataset/valid.jsonl", "/home/jiaxing/dataset/images"]
+dataset_paths: ["/graft2/datasets/danlu/eebo/eebo_data_train.jsonl", "/graft2/datasets/danlu/eebo/eebo_data_val.jsonl", "/graft2/datasets/danlu/eebo/eebo_data"]
 tokenizer: "dataset/tokenizer.json"
 exp_name: "nougat"
 train_batch_sizes: [1]
 num_workers: 8
 val_batch_sizes: [1]
-val_batches: 2
+val_batches: 0
 input_size: [896, 672]
 max_length: 4096
 max_position_embeddings: 4096
-accumulate_grad_batches: 3
+accumulate_grad_batches: 24
 window_size: 7
 patch_size: 4
 embed_dim: 128
@@ -27,10 +27,10 @@ min_lr: 7.5e-6
 lr_step: 16
 gamma: 0.9996
 warmup_steps: 250
-num_training_samples_per_epoch: 10000
-max_epochs: 15
+num_training_samples_per_epoch: 3721403
+max_epochs: 3
 max_steps: -1
 val_check_interval: null
-check_val_every_n_epoch: 1
+check_val_every_n_epoch: 0
 gradient_clip_val: 0.5
 verbose: False

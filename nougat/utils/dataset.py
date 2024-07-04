@@ -213,6 +213,9 @@ class CustomDataset(Dataset):
         test_path: the path to the test dataset
     """
 
+    train_meta: List[str] = None
+    valid_meta: List[str] = None
+
     def __init__(
         self,
         train_jsonl_path: str,
@@ -224,19 +227,19 @@ class CustomDataset(Dataset):
         self.train_jsonl_path: str = train_jsonl_path
         self.valid_jsonl_path: str = valid_jsonl_path
         self.image_path: str = image_path
-        self.train_meta: List[str] = None
-        self.valid_meta: List[str] = None
         self.split: str = split
 
         try:
             with open(train_jsonl_path) as w:
-                self.train_meta = w.readlines()
+                if self.train_meta == None:
+                    self.train_meta = w.readlines()
         except Exception:
             raise Exception("load train_jsonl failed.")
         
         try:
             with open(valid_jsonl_path) as w:
-                self.valid_meta = w.readlines()
+                if self.valid_meta == None:
+                    self.valid_meta = w.readlines()
         except Exception:
             raise Exception("load valid_jsonl failed.")
 
@@ -251,7 +254,13 @@ class CustomDataset(Dataset):
         metadata: Dict = orjson.loads(meta_list[idx])
         # prepare the picture first
         pic_path: str = metadata["image_url"]
-        img: Image.Image = None
+        #img: Image.Image = None
+        try:
+            img: Image.Image = Image.open(os.path.join(self.image_path, pic_path))
+        except:
+            print(f"cannot load for {os.path.join(self.image_path, pic_path)}")
+            return None
+        """
         # left case
         if pic_path.endswith(".left.png"):
             img = Image.open(os.path.join(self.image_path, pic_path.replace(".left.png", ".tif")))
@@ -266,6 +275,7 @@ class CustomDataset(Dataset):
                 img = Image.open(os.path.join(self.image_path, pic_path.replace(".png", ".tif")))
             except:
                 raise Exception("No such image exist.")
+        """
 
         return {"image": img, "ground_truth": metadata["sentence"], "meta": metadata}
 

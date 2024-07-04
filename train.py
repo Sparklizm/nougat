@@ -181,6 +181,9 @@ def train(config):
     lr_callback = LearningRateMonitor(logging_interval="step")
 
     checkpoint_callback = ModelCheckpoint(
+        every_n_train_steps=300,
+        save_top_k=10,
+        monitor="loss",
         save_last=True,
         dirpath=Path(config.result_path) / config.exp_name / config.exp_version,
     )
