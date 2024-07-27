@@ -1,7 +1,7 @@
 resume_from_checkpoint_path: null
-result_path: "/graft3/checkpoints/jiaxing"
-model_path: null
-dataset_paths: ["/graft2/datasets/danlu/eebo/labels/image_list.txt", "/graft2/datasets/danlu/eebo/labels/sentences", "/graft2/datasets/danlu/eebo/eebo_data"]
+result_path: "/graft3/checkpoints/jiaxing/1e-5_5e-6_fine_tune_pretrained_small_165k_dataset/"
+model_path: "/graft2/datasets/danlu/eebo/pretrained_model_small"
+dataset_paths: ["/graft2/datasets/danlu/eebo/labels/image_list_reduced.txt", "/graft2/datasets/danlu/eebo/labels/sentences", "/graft2/datasets/danlu/eebo/eebo_data"]
 tokenizer: "dataset/tokenizer.json"
 exp_name: "nougat"
 train_batch_sizes: [1]
@@ -9,26 +9,26 @@ num_workers: 8
 val_batch_sizes: [1]
 val_batches: 0
 input_size: [896, 672]
-max_length: 4096
+max_length: 3584
 max_position_embeddings: 4096
-accumulate_grad_batches: 24
+accumulate_grad_batches: 48
 window_size: 7
 patch_size: 4
 embed_dim: 128
 hidden_dimension: 1024
 num_heads: [4, 8, 16, 32]
 encoder_layer: [2, 2, 14, 2]
-decoder_layer: 10
+decoder_layer: 4
 align_long_axis: False
 num_nodes: 1
 seed: 25
-lr: 5e-5
-min_lr: 7.5e-6
+lr: 1e-5
+min_lr: 5e-6
 lr_step: 16
 gamma: 0.9996
 warmup_steps: 250
 num_training_samples_per_epoch: 3721403
-max_epochs: 3
+max_epochs: 1
 max_steps: -1
 val_check_interval: null
 check_val_every_n_epoch: 0

@@ -143,7 +143,6 @@ def train(config):
     pl.seed_everything(config.get("seed", 42), workers=True)
     model_module = NougatModelPLModule(config)
     data_module = NougatDataPLModule(config)
-
     # add datasets to data_module
     datasets = {"train": [], "validation": []}
     """
@@ -176,7 +175,7 @@ def train(config):
     checkpoint_callback = ModelCheckpoint(
         every_n_train_steps=300,
         save_top_k=10,
-        monitor="loss",
+        monitor="train/loss",
         save_last=True,
         dirpath=Path(config.result_path) / config.exp_name / config.exp_version,
     )

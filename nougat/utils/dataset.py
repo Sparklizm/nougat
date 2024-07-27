@@ -268,7 +268,7 @@ class CustomDataset(Dataset):
             with open(txt_path, 'r') as w:
                 sentence = w.read()
         except:
-            print(f"cannot reteieve sentence in {txt_path}")
+            print(f"cannot retrieve sentence in {txt_path}")
             return None
 
         return {"image": img, "ground_truth": sentence, "meta": {"img_path": pic_path}}
